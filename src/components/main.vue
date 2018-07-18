@@ -34,13 +34,21 @@
             </div>
             <div class="my-msg">
                 <div class="msg-title">
-                    <span :class="{'actived': msgFlag}">我的报价</span><span>我的广告</span>
+                    <span :class="{'actived': msgFlag}" @click="changeMy">我的报价</span><span :class="{'actived': !msgFlag}" @click="changeMy">我的广告</span>
                 </div>
-                <div class="price">
+                <div class="price" v-show="msgFlag">
                     <div class="tr tr-title"><span>订单</span><span>价格</span><span>折扣</span><span>总价</span><span>操作</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 150px; z-index: 100;  " view-class="view-box" :native="false">
                            
                        <div class="tr" v-for="n in 30" :key='n' ><span>订单</span><span>价格</span><span>折扣</span><span>总价</span><span class="text-red">操作</span></div>
+
+                    </el-scrollbar>
+                </div>
+                <div class="my-broadcast" v-show="!msgFlag">
+                    <div class="tr tr-title"><span>订单</span><span>时间</span><span>操作</span></div>
+                    <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 150px; z-index: 100;  " view-class="view-box" :native="false">
+                           
+                       <div class="tr" v-for="n in 30" :key='n' ><span>订单</span><span>价格</span><span class="text-red"> <span class="text-blue"></span>操作</span></div>
 
                     </el-scrollbar>
                 </div>
@@ -56,6 +64,11 @@ export default {
         return {
             trActived: 0,
             msgFlag: true
+        }
+    },
+    methods:{
+        changeMy(){
+            this.msgFlag = !this.msgFlag
         }
     }
 
@@ -238,24 +251,41 @@ export default {
                     // height: 36px;
                     padding: 10px 0px;
                     line-height: 1.5;
-                    span:nth-child(1){
+                   
+                }
+        .price .tr{
+            span:nth-child(1){
                         width: 220px;
                     }
-                    span:nth-child(2){
-                        width: 307px;
+            span:nth-child(2){
+                width: 307px;
+            }
+            span:nth-child(3){
+                width: 190px;
+                
+            }
+            span:nth-child(4){
+                width: 380px;
+            
+            }
+            span:nth-child(5){
+                width: 100px;
+                text-align: right;
+            }
+        }
+        .my-broadcast{
+             span:nth-child(1){
+                        width: 50%;
                     }
-                    span:nth-child(3){
-                        width: 190px;
-                        
-                    }
-                    span:nth-child(4){
-                        width: 380px;
-                    
-                    }
-                    span:nth-child(5){
-                        width: 100px;
-                        text-align: right;
-                    }
-                }
+            span:nth-child(2){
+                width: 25%;
+            }
+            span:nth-child(3){
+                width: 25%;
+                text-align: right;
+                
+                
+            }
+        }
     }
 </style>

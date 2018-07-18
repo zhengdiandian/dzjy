@@ -73,6 +73,10 @@ export default {
   color:rgba(240,48,48,1);
   text-decoration:underline;
 }
+.text-blue{
+  color:rgba(41,74,147,1);
+  text-decoration: underline;
+}
 a{
   color: #fff;
   text-decoration: none;
