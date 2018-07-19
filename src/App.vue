@@ -130,4 +130,16 @@ color:rgba(68,73,84,1);
     display: inline-block;
     box-sizing: border-box;
   }
+
+
+  .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+    background-color: #409F0D;
+    border-color: #DFE5E7;
+}
+.el-checkbox__input.is-checked+.el-checkbox__label {
+    color: #409F0D;
+}
+.el-checkbox__inner:hover {
+    border-color: #DFE5E7;
+}
 </style>

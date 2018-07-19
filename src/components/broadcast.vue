@@ -6,7 +6,7 @@
                     <div class="title">
                         <span>ETH</span>
                     </div>
-                    <h1>sdfdsafsda</h1>
+                    
                     <!-- <el-scrollbar wrap-class="list">
                         <div v-for="n in 1000" :key="n">{{n}}</div>
                     </el-scrollbar> -->
@@ -57,6 +57,7 @@ export default {
     .main{
         margin: 0 auto;
         width: 1200px;
+        height: 868px;
         .purchase{
             width: 100%;
             height: 500px;
@@ -69,6 +70,7 @@ export default {
                 font-weight: 700;
                 border-bottom: .5px solid rgba($color: #dfe5e7, $alpha: 1.0)
                             }
+            
             .left-wrap{
                 // display: block;
                 box-sizing: border-box;
@@ -84,6 +86,7 @@ export default {
                 }
                 .title+.tr{
                     margin: 10px 0px;
+                    color:rgba(147,154,163,1);
                 }
                 .tr{
                     width: 100%;
@@ -146,6 +149,7 @@ export default {
                 }
                 .title+.tr{
                     margin: 10px 0px;
+                    color:rgba(147,154,163,1);
                 }
                 .tr{
                     width: 100%;

@@ -12,7 +12,8 @@ export default new Router({
     {
       path: '/index/:type',
       name: 'index',
-      component: Main
+      component: Main,
+      props: true,
     },
     {
         path:'/broadcast/',
