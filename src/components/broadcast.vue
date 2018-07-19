@@ -4,17 +4,17 @@
             <div class="purchase">
                 <div class="left-wrap">
                     <div class="title">
-                        <span>ETH</span>
+                        <span>我的广告</span>
                     </div>
                     
                     <!-- <el-scrollbar wrap-class="list">
                         <div v-for="n in 1000" :key="n">{{n}}</div>
                     </el-scrollbar> -->
                    <!-- <el-row> -->
-                       <div class="tr"><span>用户名</span><span>数量</span><span>操作</span></div>
+                       <div class="tr"><span>用户名</span><span>日期</span></div>
                          <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="(n ,index) in 199" :key='n' @click="trActived=index" :class="{actived: trActived==index}"><span>用户名</span><span>数量</span><span >操作</span></div>
+                       <div class="tr" v-for="(n ,index) in 199" :key='n' @click="trActived=index" :class="{actived: trActived==index}"><span>用户名</span><span >操作</span></div>
 
                         </el-scrollbar>
                    <!-- </el-row> -->
@@ -23,10 +23,10 @@
                     <div class="title">
                         <span>买方报价</span><span>参考市价3020.20CNY</span>
                     </div>
-                    <div class="tr"><span>用户名</span><span>单价</span><span>折扣</span><span>总价</span></div>
+                    <div class="tr"><span>用户名</span><span>单价</span><span>折扣</span><span>总价</span><span>成交</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="n in 199" :key='n' ><span>用户名</span><span>数量</span><span >操作</span><span>总价</span></div>
+                       <div class="tr" v-for="n in 199" :key='n' ><span>用户名</span><span>数量</span><span >9.9折</span><span>总价</span><span class="text-blue">成交</span></div>
 
                     </el-scrollbar>
 
@@ -94,13 +94,10 @@ export default {
                     margin: 8px 0px;
                     line-height: 36px;
                     span:nth-child(1){
-                        width: 220px;
+                        width: 50%;
                     }
                     span:nth-child(2){
-                        width: 150px;
-                    }
-                    span:nth-child(3){
-                        width: 149px;
+                        width: 50%;
                         text-align: right;
                     }
                 }
@@ -160,14 +157,20 @@ export default {
                         width: 220px;
                     }
                     span:nth-child(2){
-                        width: 234px;
+                        width: 200px;
                     }
                     span:nth-child(3){
                         width: 50px;
                         // text-align: right;
                     }
                     span:nth-child(4){
-                        width: 176px;
+                        width: 109px;
+                        // float: right;
+                        text-align: right;
+
+                    }
+                    span:nth-child(5){
+                        width: 100px;
                         // float: right;
                         text-align: right;
 
