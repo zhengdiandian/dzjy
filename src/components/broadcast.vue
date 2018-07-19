@@ -86,6 +86,7 @@ export default {
                 }
                 .title+.tr{
                     margin: 10px 0px;
+                    cursor: default;
                     color:rgba(147,154,163,1);
                 }
                 .tr{
@@ -93,6 +94,7 @@ export default {
                     height: 36px;
                     margin: 8px 0px;
                     line-height: 36px;
+                    cursor: pointer;
                     span:nth-child(1){
                         width: 50%;
                     }

@@ -6,9 +6,9 @@
             </div>
             <ul class="nav-center nav-left ">
                 <!-- <router-link to="/index" @click="()=>false"> -->
-                <li  @click="showSel = !showSel"><router-link active-class="nav-actived" :to="{name:'index', params:{
+                <li ><router-link active-class="nav-actived" :to="{name:'index', params:{
                     type:selectValue
-                }}" >购买{{selectValue}}</router-link> <span class="select "  ></span>
+                }}" >购买{{selectValue}}</router-link> <span class="select "  @click="showSel = !showSel" ></span>
                     <ul class="sel-list" v-show="showSel">
                         <li v-for="item in selectList" @click = changeSelect(item) :key="item">{{item}}</li>
                         <!--<li>{{}}</li>-->
@@ -17,8 +17,8 @@
                     </ul>
                 </li>
                 <!-- </router-link> -->
-                <li :class="{'nav-actived': current == 2}" @click=" num =2"><a href="/issue.html">发布广告</a></li>
-                <li :class="{'nav-actived': current == 3}"><router-link to='/broadcast' active-class="nav-actived" @click="op=0.5" >交易管理</router-link> <span class=""></span></li>
+                <li :class="{'nav-actived': current == 2}" @click=" num =2"><router-link to="/sell" active-class="nav-actived">发布广告</router-link></li>
+                <li :class="{'nav-actived': current == 3}"><router-link to='/transaction' active-class="nav-actived" @click="op=0.5" >交易管理</router-link> <span class=""></span></li>
             </ul>
         <ul class="nav-center nav-right">
             <li>
