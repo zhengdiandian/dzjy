@@ -8,18 +8,18 @@
           <div class="notice-item">2，大宗交易发起金额必须大于1000.00USDT或等值法币</div>
           <div class="notice-item">3，Block Trading完成后，平台收取发起方0.1%的手续费</div>
           <div class="issue">
-            <div class="issue-title">EOS资产：90,000,000.00</div>
+            <div class="issue-title">EOS资产：{{balance}}</div>
             <div class="issue-info-title">出售设置</div>
             <div class="issue-info">出售数量: <input type="text" v-model="num" placeholder="最小可出售5000.00EOS"></div>
             <div class="issue-info">接收币种:
               <div>
-                <input class="check" type="radio" value="BTC" v-model="icoType" name="type" id="1">
+                <input class="check" type="checkbox" value="BTC" v-model="icoType" name="type" id="1">
                 <label for="1"></label>
                 <span>BTC</span>
-                <input class="check" type="radio" value="ETH" v-model="icoType" name="type" id="2">
+                <input class="check" type="checkbox" value="ETH" v-model="icoType" name="type" id="2">
                 <label for="2"></label>
                 <span>ETH</span>
-                <input class="check" type="radio" value="USDT" v-model="icoType" name="type" id="3">
+                <input class="check" type="checkbox" value="USDT" v-model="icoType" name="type" id="3">
                 <label for="3"></label>
                 <span>USDT</span>
               </div>
@@ -32,26 +32,7 @@
 
 <script>
     
-    Date.prototype.format = function(fmt) {
-      var o = {
-        "M+" : this.getMonth()+1,                 //月份
-        "d+" : this.getDate(),                    //日
-        "h+" : this.getHours(),                   //小时
-        "m+" : this.getMinutes(),                 //分
-        "s+" : this.getSeconds(),                 //秒
-        "q+" : Math.floor((this.getMonth()+3)/3), //季度
-        "S"  : this.getMilliseconds()             //毫秒
-      };
-      if(/(y+)/.test(fmt)) {
-        fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
-      }
-      for(var k in o) {
-        if(new RegExp("("+ k +")").test(fmt)){
-          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-        }
-      }
-      return fmt;
-    }
+    
     var time1 = new Date().format("yyyy-MM-dd hh:mm:ss");
     console.log(time1);
     export default {
@@ -60,7 +41,9 @@
           return {
             icoType: '',
             data:[],
-            num:''
+            num:'',
+            userInfo: [],
+            balance: ''
           }
 
         },
@@ -80,8 +63,30 @@
             localStorage.setItem('data',JSON.stringify(data))
             console.log(data)
           }
-      }
+      },
+      computed:{
+        // balance(){
+        //   debugger
+        //   let balance = this.userInfo.filter((item) => item.coin_type == 'EOS')
+        //   return balance[0]['coin_balance']
+        // }
+      },
+      created(){
+        let token = sessionStorage.getItem('token')
+          if( token){
+            this.axios.post('/getUserInfo',{
+              token
+            })
+            .then(response => {
+              console.log('user',response);
+              this.userInfo = response.data.balances
+              this.balance = this.userInfo.filter((item) => item.coin_type == 'EOS')[0].coin_balance
+            })
+           
+        }
+      },
     }
+
 </script>
 
 <style lang="scss" scoped>

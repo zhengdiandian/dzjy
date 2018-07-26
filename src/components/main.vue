@@ -32,12 +32,12 @@
             <div class="purchase">
                 <div class="left-wrap">
                     <div class="title">
-                        <span class="select" @click="showSelectList=!showSelectList" >ETH
+                        <span class="select" @click="showSelectList=!showSelectList" >{{currentCoin}}
                              <ul class="sel-list"  v-show="showSelectList">
                                     
                         
-                        <li>ETH</li>
-                        <li>ETH</li>
+                        <li v-for="item in coins" :key="item" @click='selectCoin(item)'>{{item}}</li>
+                        
                              </ul>
                             </span>
                              <span class="icon"></span><span>{{type}}</span>
@@ -49,7 +49,7 @@
                        <div class="tr"><span>用户名</span><span>数量</span><span>操作</span></div>
                          <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="(n ,index) in 199" :key='n' @click="trActived=index" :class="{actived: trActived==index}"><span>用户名</span><span>数量</span><span ><span @click="showDowde">报价</span></span></div>
+                       <div class="tr" v-for="(order ,index) in sellOrders" :key='index' @click="getQuotations(index,order.sell_order_id)" :class="{actived: trActived==index}"><span>{{order.user_name}}</span><span>{{order.amount}}</span><span ><span @click="showDowde">报价</span></span></div>
 
                         </el-scrollbar>
                    <!-- </el-row> -->
@@ -61,7 +61,7 @@
                     <div class="tr"><span>用户名</span><span>单价</span><span>折扣</span><span>总价</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="n in 199" :key='n' ><span>用户名</span><span>数量</span><span >操作</span><span>总价</span></div>
+                       <div class="tr" v-for="(buyer, index) in quotations" :key='index' ><span>{{buyer.user_name}}</span><span>{{buyer.unit_price}}</span><span >{{buyer.discount}}</span><span>{{buyer.total_price}}</span></div>
 
                     </el-scrollbar>
 
@@ -76,7 +76,7 @@
                     <div class="tr tr-title"><span>订单</span><span>价格</span><span>折扣</span><span>总价</span><span>操作</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 150px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="n in 30" :key='n' ><span>订单</span><span>价格</span><span>折扣</span><span>总价</span><span class="text-red">操作</span></div>
+                       <div class="tr" v-for="(item, i) in myQuotations" :key='i' ><span>{{item.quotation_id}}&nbsp&nbsp{{item.market}}</span><span>{{item.unit_price}}</span><span>{{item.discount}}折</span><span>{{item.total_price}}</span><span class="text-red">取消</span></div>
 
                     </el-scrollbar>
                 </div>
@@ -84,7 +84,7 @@
                     <div class="tr tr-title"><span>订单</span><span>时间</span><span>操作</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 150px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="n in 30" :key='n' ><span>订单</span><span>价格</span><span class="text-red"> <span class="text-blue"><router-link class="text-blue" to="/broadcast">查看报价</router-link></span>操作</span></div>
+                       <div class="tr" v-for="(ad,n ) in myAdvertise" :key='n' ><span>{{ad.quotation_id}}&nbsp&nbsp{{ad.market}}</span><span>价格</span><span class="text-red"> <span class="text-blue"><router-link class="text-blue" to="/broadcast">查看报价</router-link></span>取消</span></div>
 
                     </el-scrollbar>
                 </div>
@@ -96,7 +96,7 @@
 <script>
 
 export default {
-    props:['type'],
+    props:['type','marketID','token'],
     data(){
         return {
             trActived: 0,
@@ -106,18 +106,53 @@ export default {
             priceFlag: 1,
             discount: "",
             showSelectList: false,
+            // userToken: '',
+            coins:[],
+            currentCoin:'BTC',
+            sellOrders:[],
+            quotations: [],
+            currentlyQuotaions:[],
+            myQuotations:[],
+            myAdvertise:[],
         }
     },
     methods:{
+        //此方法为数据初始化
+        init(){
+             this.axios.post('/getCoinsList',{
+            "market_id": this.marketID || 1
+        })
+        .then(response => {
+            console.log('coinsList',response)
+            this.coins = response.data.coins
+            this.currentCoin = this.coins[0]
+        })
+        this.axios.post('/getSellOrders',{
+            'market_id': this.marketID || 1
+        }) 
+        .then(response =>{
+            let data = response.data
+            // if(data.ret_code !=='1'){
+                this.sellOrders = data.sell_orders
+                this.getQuotations(0,this.sellOrders[0]['sell_order_id'])
+            // }
+            console.log('sellOrders',response)
+        })
+        },
+        // 选择报价列表的种类
+        selectCoin(coinName){
+            this.currentCoin = coinName
+        },
         //显示我的一栏
         changeMy(){
             this.msgFlag = !this.msgFlag
         },
         //显示报价弹窗
-        showDowde(i) {
+        showDowde(sellID) {
       this.dowde = true;
-    //   this.reset();
-    //   document.body.style = "overflow: hidden";
+      document.body.style = "overflow: hidden";
+      this.reset();
+      
     //   this.curData = this.data[i].buyer.filter(item => {
     //     return item.type === this.curName;
     //   });
@@ -127,11 +162,92 @@ export default {
     reset() {
       this.discount = this.price = "";
     },
+    //得到买方报价
+    getQuotations(index){
+        let id = arguments[1]
+        this.trActived = index
+        
+        this.axios.post('/getQuotations',{
+            'sell_order_id': arguments[1]
+        }).then(response => {
+            console.log('quotations',response);
+            this.quotations = response.data.sell_orders
+        }).catch(error => {
+            console.error(error)
+        })
+        this.axios.post('/getCoinPrice',{
+            'market': this.type,
+            'coin': this.currentCoin,
+        }).then(response => {
+            console.log('price',response);
+        })
+
+    },
     //关闭报价弹窗
     cancel() {
       this.dowde = false;
       document.body.style = "overflow: none";
     },
+    //改变购买种类进行数据更新 选择市场
+    changeOrder(){
+          this.axios.post('/getCoinsList',{
+            "market_id": this.marketID || 1
+        })
+        .then(response => {
+            console.log('coinsList',response)
+            this.coins = response.data.coins
+            this.currentCoin = this.coins[0]
+        })
+        this.axios.post('/getSellOrders',{
+            'market_id': this.marketID || 1
+        }) 
+        .then(response =>{
+            let data = response.data
+            // if(data.ret_code !=='1'){
+                this.sellOrders = data.sell_orders
+            // }
+            console.log('sellOrders',response)
+        })
+    },
+    },
+    created(){
+        this.init()
+        
+        // debugger
+        let token = sessionStorage.getItem('token')
+        if( token){
+            //  console.log('watch',newV,oldV);
+             this.axios.post('/getMyQuotations',{           
+                'token': token
+                }).then(response => {
+                    console.log('myQoutatins',response)
+                    this.myQuotations = response.data.sell_orders
+                })
+            this.axios.post('/getMyAdvertise',{
+                token
+            }).then(response => {
+                console.log('ad',response);
+                this.myAdvertise = response.data
+            })
+        }
+        
+       
+    },
+    mounted(){
+        console.log('sdfds',this.$props);
+       
+    },
+    watch:{
+        $route(to, from){
+            if(to.params.type){
+              this.changeOrder()
+
+            }
+            console.log(to,from)
+        },
+        token(newV,oldV){
+           
+        }
     }
 
 }

@@ -1,14 +1,36 @@
 <template>
   <div id="app">
     <my-header></my-header>
-    <router-view/>
+    <router-view :token='userToken'></router-view>
     <my-footer></my-footer>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data(){
+    return {
+      userToken: '',
+      userIofo: ''
+    }
+  },
+  created(){
+    
+    this.axios.post('/login', {
+            'user_name': 'jack',
+            'password_MD5': '7d87d7ed5693987e8bd7a2530eb44bdc'
+        }).then((response) => {
+            console.log('token111111111111',response)
+            // debugger
+            this.userToken = response.data.ret_token
+            this.userName = response.data.user_name
+            sessionStorage.setItem('token',response.data.ret_token)
+
+        }).catch((error) => {
+            console.log(error)
+        })
+  }
 }
 </script>
 

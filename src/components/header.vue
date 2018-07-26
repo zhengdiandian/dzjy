@@ -10,7 +10,7 @@
                     type:selectValue
                 }}" >购买{{selectValue}}</router-link> <span class="select "  @click="showSel = !showSel" ></span>
                     <ul class="sel-list" v-show="showSel">
-                        <li v-for="item in selectList" @click = changeSelect(item) :key="item">{{item}}</li>
+                        <li v-for="item in marketData" @click = changeSelect(item) :key="item.markets_id">{{item.market_name}}</li>
                         <!--<li>{{}}</li>-->
                         <!--<li>ETH</li>-->
                         <!--<li>ETH</li>-->
@@ -23,7 +23,7 @@
         <ul class="nav-center nav-right">
             <li>
               <!--<a href="">注册</a><span>&nbsp或&nbsp</span><a href="">登入</a>-->
-              <a href="">Binky</a>
+              <a href="">jack</a>
             </li>
             <li class="lang select">English</li>
         </ul>
@@ -41,7 +41,8 @@
               selectList: ['EOS','ETH','BTC','XEM','BTM','QTUM'],
               selectValue: 'EOS',
               current: 2,
-              op: 1
+              op: 1,
+              marketData: []
 
             }
         },
@@ -52,27 +53,27 @@
         // }
       },
       methods: {
-          changeSelect(name){
+          changeSelect(options){
               this.opacity = 1
-            this.selectValue = name
+            this.selectValue = options.market_name
+            this.showSel = !this.showSel
             this.$router.push({
                 name: 'index',
                 params: {
-                    type: name
-                }
+                    type: options.market_name,
+                    marketID: options.markets_id
+                },
+                
             })
             // this.$emit('msgFunc',this.selectValue)
             // window.localStorage.setItem('selected', this.selectValue)
           }
       },
       created(){
-        // this.changeSelect('EOS')
-        // console.log(this.$route)
-        // if(this.$route.name == 'index'){
-        //     this.opacity = 1
-        // }else{
-        //     this.opacity =.5
-        // }
+           this.axios.post('/getMarketsList').then(response => {
+            console.log(response)
+            this.marketData = response.data.markets
+        })
       },
       beforeRouteUpdate (to, from, next) {
     // 在当前路由改变，但是改组件被复用时调用

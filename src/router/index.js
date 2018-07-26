@@ -15,6 +15,10 @@ export default new Router({
   },
   routes: [
     {
+      path: '/',
+      redirect: '/index/EOS'
+    },
+    {
       path: '/index/:type',
       name: 'index',
       component: Main,
