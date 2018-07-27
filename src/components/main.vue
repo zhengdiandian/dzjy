@@ -56,12 +56,12 @@
 
                 </div><div class="right-wrap">
                     <div class="title">
-                        <span>买方报价</span><span>参考市价3020.20CNY</span>
+                        <span>买方报价</span><span>参考市价{{RP}}CNY</span>
                     </div>
                     <div class="tr"><span>用户名</span><span>单价</span><span>折扣</span><span>总价</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="(buyer, index) in quotations" :key='index' ><span>{{buyer.user_name}}</span><span>{{buyer.unit_price}}</span><span >{{buyer.discount}}</span><span>{{buyer.total_price}}</span></div>
+                       <div class="tr" v-for="(buyer, index) in currentlyQuotaions" :key='index' ><span>{{buyer.user_name}}</span><span>{{buyer.unit_price}}</span><span >{{buyer.discount}}</span><span>{{buyer.total_price}}</span></div>
 
                     </el-scrollbar>
 
@@ -84,7 +84,7 @@
                     <div class="tr tr-title"><span>订单</span><span>时间</span><span>操作</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 150px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="(ad,n ) in myAdvertise" :key='n' ><span>{{ad.quotation_id}}&nbsp&nbsp{{ad.market}}</span><span>价格</span><span class="text-red"> <span class="text-blue"><router-link class="text-blue" to="/broadcast">查看报价</router-link></span>取消</span></div>
+                       <div class="tr" v-for="(ad,n ) in myAdvertise" :key='n' ><span>{{ad.sell_order_id}}&nbsp&nbsp{{ad.market}}</span><span>{{new Date(ad.date*1000).format("yyyy-MM-dd &nbsp&nbsp hh: mm: ss")}}</span><span class="text-red"> <span class="text-blue"><router-link class="text-blue" :to="{name: 'broadcast',params:{id:ad.sell_order_id,index:n}}">查看报价</router-link></span>取消</span></div>
 
                     </el-scrollbar>
                 </div>
@@ -111,9 +111,11 @@ export default {
             currentCoin:'BTC',
             sellOrders:[],
             quotations: [],
+            // currentQuotatis:[],
             currentlyQuotaions:[],
             myQuotations:[],
             myAdvertise:[],
+            RP:''
         }
     },
     methods:{
@@ -139,9 +141,15 @@ export default {
             console.log('sellOrders',response)
         })
         },
+        //筛选买家报价列表
+        filterData(origin, property, value){
+            return origin.filter(item => item[property]==value)
+        },
         // 选择报价列表的种类
         selectCoin(coinName){
             this.currentCoin = coinName
+            this.currentlyQuotaions = this.filterData(this.quotations,'coin_name',this.currentCoin)
+            
         },
         //显示我的一栏
         changeMy(){
@@ -172,6 +180,8 @@ export default {
         }).then(response => {
             console.log('quotations',response);
             this.quotations = response.data.sell_orders
+            this.currentlyQuotaions = this.filterData(this.quotations,'coin_name',this.currentCoin)
+            console.log('filter',this.currentlyQuotaions)
         }).catch(error => {
             console.error(error)
         })
@@ -180,6 +190,7 @@ export default {
             'coin': this.currentCoin,
         }).then(response => {
             console.log('price',response);
+            this.RP = response.data.price
         })
 
     },
@@ -221,13 +232,13 @@ export default {
                 'token': token
                 }).then(response => {
                     console.log('myQoutatins',response)
-                    this.myQuotations = response.data.sell_orders
+                    this.myQuotations = response.data.quotations
                 })
             this.axios.post('/getMyAdvertise',{
                 token
             }).then(response => {
                 console.log('ad',response);
-                this.myAdvertise = response.data
+                this.myAdvertise = response.data.advertises
             })
         }
         

@@ -11,10 +11,10 @@
                         <div v-for="n in 1000" :key="n">{{n}}</div>
                     </el-scrollbar> -->
                    <!-- <el-row> -->
-                       <div class="tr"><span>用户名</span><span>日期</span></div>
+                       <div class="tr"><span>订单</span><span>日期</span></div>
                          <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="(n ,index) in 199" :key='n' @click="trActived=index" :class="{actived: trActived==index}"><span>用户名</span><span >操作</span></div>
+                       <div class="tr" v-for="(item ,index) in myAdvertise " :key='index' @click="clickTr(index, item.sell_order_id)" :class="{actived: trActived==index}"><span>{{item.sell_order_id}}&nbsp&nbsp{{item.market}}</span><span >{{new Date(item.date*1000).format("yyyy-MM-dd &nbsp&nbsp hh: mm: ss")}}</span></div>
 
                         </el-scrollbar>
                    <!-- </el-row> -->
@@ -26,7 +26,7 @@
                     <div class="tr"><span>用户名</span><span>单价</span><span>折扣</span><span>总价</span><span>成交</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="n in 199" :key='n' ><span>用户名</span><span>数量</span><span >9.9折</span><span>总价</span><span class="text-blue">成交</span></div>
+                       <div class="tr" v-for="(item, index) in myQuotations" :key='index' ><span>{{item.user_name}}</span><span>{{item.amount}}</span><span >{{item.discount}}折</span><span>{{item.total_price}}</span><span class="text-blue">成交</span></div>
 
                     </el-scrollbar>
 
@@ -40,10 +40,52 @@
 <script>
 
 export default {
+    props:['id','token'],
     data(){
         return {
-            trActived: 0
+            trActived: 0,
+            myAdvertise:[],
+            myQuotations:[]
         }
+    },
+    methods:{
+        clickTr(index,id){
+            this.trActived = index
+            
+            this.axios.post('/getQuotations',{
+            'sell_order_id': id
+        }).then(response => {
+            this.myQuotations = response.data.sell_orders
+            console.log('dsfdsf',response)
+        })
+        }
+    },
+    created(){
+        this.trActived = this.$route.params.index
+         let token = sessionStorage.getItem('token')
+        if( token){
+            //  console.log('watch',newV,oldV);
+             
+            this.axios.post('/getMyAdvertise',{
+                token
+            }).then(response => {
+                console.log('ad',response);
+                this.myAdvertise = response.data.advertises
+            })
+        }
+        // this.axios.post('/getMyAdvertise',{
+        //         token
+        //     }).then(response => {
+        //         console.log('ad',response);
+        //         this.myAdvertise = response.data.advertises
+        //     })
+        this.axios.post('/getQuotations',{
+            'sell_order_id': this.id
+        }).then(response => {
+            this.myQuotations = response.data.sell_orders
+            console.log('dsfdsf',response)
+        })
+        console.log(1)
     }
 
 }

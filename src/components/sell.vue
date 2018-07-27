@@ -33,8 +33,8 @@
 <script>
     
     
-    var time1 = new Date().format("yyyy-MM-dd hh:mm:ss");
-    console.log(time1);
+    // var time1 = new Date().format("yyyy-MM-dd hh:mm:ss");
+    // console.log(time1);
     export default {
         name: "issue",
         data(){
@@ -57,7 +57,7 @@
               data.push({
               user: 'Binky',
               type: this.icoType,
-              date: new Date().format("yyyy-MM-dd hh:mm:ss"),
+              // date: new Date().format("yyyy-MM-dd hh:mm:ss"),
               num: this.num
             })
             localStorage.setItem('data',JSON.stringify(data))

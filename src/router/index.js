@@ -25,8 +25,9 @@ export default new Router({
       props: true,
     },
     {
-        path:'/broadcast/',
+        path:'/broadcast/:id',
         name: 'broadcast',
+        props: true,
         component:
          Broadcast,
     },
