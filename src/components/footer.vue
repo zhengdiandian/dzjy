@@ -156,14 +156,14 @@ export default {
     width: 100%;
     box-sizing: border-box;
     border-bottom: 1px solid rgba(255,255,255,0.3);
-    padding: 0px 60px;
+    // padding: 0px 60px;
   }
 
   list-style: none;
   ul{
     padding: 0px;
-    margin-left: 60px;
-    margin-right: 60px;
+    // margin-left: 60px;
+    // margin-right: 60px;
     margin-bottom: 0px;
     li{
       display: inline-block;

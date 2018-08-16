@@ -2,7 +2,7 @@
   <div id="app">
     <my-header></my-header>
     <router-view :token='userToken'></router-view>
-    <my-footer></my-footer>
+    <my-footer class="footer"></my-footer>
   </div>
 </template>
 
@@ -42,6 +42,9 @@ export default {
   ul, ol{
     list-style: none;
   }
+  html{
+    height: 100%;
+  }
   body{
     min-width: 1200px;
       height: 100%;
@@ -49,6 +52,7 @@ export default {
       font-family: PingFangSC-Regular, Helvetica, Tahoma, Arial, \5b8b\4f53, sans-serif;
       list-style: none;
       font-size: 14px;
+      background: #f9f9f9;
       color:rgba(68,73,84,1);
       /* overflow: hidden; */
 
@@ -164,4 +168,5 @@ color:rgba(68,73,84,1);
 .el-checkbox__inner:hover {
     border-color: #DFE5E7;
 }
+
 </style>

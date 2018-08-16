@@ -30,6 +30,7 @@
         </div>
 
       </div>
+
     </div>
 </template>
 
@@ -132,22 +133,22 @@
                     line-height: 36px;
                     cursor: pointer;
                     span:nth-child(1){
-                        width: 200px;
+                        width: 16%;
                     }
                     span:nth-child(2){
-                        width: 300px;
+                        width: 25%;
                         // text-align: right;
                     }
                     span:nth-child(3){
-                        width: 240px;
+                        width: 20%;
                         // text-align: right;
                     }
                     span:nth-child(4){
-                        width: 360px;
+                        width: 30%;
                         // text-align: right;
                     }
                     span:nth-child(5){
-                        width: 100px;
+                        width: 9%;
                         text-align: right;
                     }
                 }

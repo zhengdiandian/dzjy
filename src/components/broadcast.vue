@@ -214,7 +214,7 @@ export default {
 
                     }
                     span:nth-child(5){
-                        width: 100px;
+                        width: 99px;
                         // float: right;
                         text-align: right;
 

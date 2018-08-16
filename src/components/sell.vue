@@ -13,20 +13,21 @@
             <div class="issue-info">出售数量: <input type="text" v-model="num" placeholder="最小可出售5000.00EOS"></div>
             <div class="issue-info">接收币种:
               <div>
-                <input class="check" type="checkbox" value="BTC" v-model="icoType" name="type" id="1">
-                <label for="1"></label>
+                <input class="check" type="checkbox" value="BTC" v-model="icoType" id="BTC">
+                <label for="BTC"></label>
                 <span>BTC</span>
-                <input class="check" type="checkbox" value="ETH" v-model="icoType" name="type" id="2">
-                <label for="2"></label>
+                <input class="check" type="checkbox" value="ETH" v-model="icoType"  id="ETH">
+                <label for="ETH"></label>
                 <span>ETH</span>
-                <input class="check" type="checkbox" value="USDT" v-model="icoType" name="type" id="3">
-                <label for="3"></label>
+                <input class="check" type="checkbox" value="USDT" v-model="icoType"  id="USDT">
+                <label for="USDT"></label>
                 <span>USDT</span>
               </div>
-              <a href="/index.html" class="btn" @click="submit">发布</a>
+              <span class="btn" @click="submit">发布</span>
             </div>
           </div>
         </div>
+
     </div>
 </template>
 
@@ -39,7 +40,7 @@
         name: "issue",
         data(){
           return {
-            icoType: '',
+            icoType: [],
             data:[],
             num:'',
             userInfo: [],
@@ -49,19 +50,39 @@
         },
       methods: {
           submit(){
+            let token = sessionStorage.getItem('token')
+            // debugger
+          
+            this.icoType.forEach(ico => {
+              debugger
+              let data = this.$root.markets.filter(market => {
+                debugger
+                return market.market_name == ico}
+              )
+              let market_id = data[0].markets_id
+              this.axios.post('/advertise',{
+                token,
+                market_id,
+                'amount': Number.parseFloat(this.num)
+              }).then((response)=>{
+                this.$router.go(-1)
+                console.log(response)
+              })
+            },this)
             // if(this.num && this.icoType){
             //   return false
             // }
-            debugger
-            var data = JSON.parse(localStorage.getItem('data'))
-              data.push({
-              user: 'Binky',
-              type: this.icoType,
-              // date: new Date().format("yyyy-MM-dd hh:mm:ss"),
-              num: this.num
-            })
-            localStorage.setItem('data',JSON.stringify(data))
-            console.log(data)
+            // debugger
+            // var data = JSON.parse(localStorage.getItem('data'))
+            //   data.push({
+            //   user: 'Binky',
+            //   type: this.icoType,
+            //   // date: new Date().format("yyyy-MM-dd hh:mm:ss"),
+            //   num: this.num
+            // })
+            // localStorage.setItem('data',JSON.stringify(data))
+            // console.log(data)
+
           }
       },
       computed:{
@@ -84,6 +105,7 @@
             })
            
         }
+        console.log(this.$root.markets)
       },
     }
 
@@ -200,4 +222,5 @@
       }
     }
   }
+  
 </style>

@@ -13,7 +13,7 @@ Vue.component('my-header', Header)
 Vue.component('my-footer', Footer)
 
 Vue.prototype.axios = Axios.create({
-  baseURL: 'http://192.168.3.193:3000/api/v1'
+  baseURL: 'http://localhost:3000/api/v1'
 })
 Vue.use(elementUi)
 Vue.config.productionTip = false
@@ -43,5 +43,20 @@ new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  data(){
+    return {
+      markets: []
+    }
+  },
+  created(){
+    this.axios.post('/getMarketsList').then(response => {
+      console.log('market',response)
+      
+      this.markets = response.data.markets
+      // this.marketID = response.data.markets[this.marketIndex].markets_id
+      // this.$route.params.markets_id = this.marketID
+      // Vue.prototype.markets = response.data.markets
+  })
+  }
 })

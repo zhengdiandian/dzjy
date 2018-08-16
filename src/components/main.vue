@@ -3,29 +3,29 @@
         <div class="shade" v-if= "dowde" >
             <div class="alert">
                 <div class="num">
-                  ETH资产：247.00
-                  <div>EOS=0.002ETH
+                  {{currentCoin}}资产：{{currentCoinPrice}}
+                  <div>{{type}}={{changetype}}{{currentCoin}}
                     <br>
                     <div>huobipro</div>
                   </div>
                 </div>
-                <div class="offer">报价</div>
-                <div class="price"> EOS</div>
+                <div class="offer">对{{type}}报价</div>
+                <div class="price"> </div>
                 <div class="inp">
                      <input class="check" @change="reset" v-model="priceFlag" value="1" type="radio" name="price" id="solid" checked="checked">
                     <label for="solid"></label> <span>固定单价&nbsp&nbsp&nbsp</span>
-                    <input type="text" class="alert-inp" v-model="price" :disabled="!priceFlag" placeholder="固定单价，例如0.002">
+                    <input type="text" class="alert-inp" @keyup="price=price.replace(/[^\d.]/g,'')" v-model="price" :disabled="!priceFlag" :placeholder="placeholder">
 
                 </div>
-                <div class="inp">
+                <div class="inp text">
                      <input class="check" @change="reset()" type="radio" name="price" id="market"  v-model="priceFlag">
                     <label for="market"></label>
                       <!-- <el-checkbox>备选项</el-checkbox> -->
                     <span>按市价折扣</span>
-                    <input type="text" class="alert-inp" v-model="discount" @input="input" :disabled="priceFlag"  placeholder="折扣比例，例如90">
+                    <input type="text" class="alert-inp text"  @keyup="discount=discount.replace(/[^\d.]/g,'')"  v-model="discount"  :disabled="priceFlag"  placeholder="折扣比例，例如90%">
                 </div>
                 <div class="cancel" @click="cancel">取消</div>
-                <div class="submit" >提交报价</div>
+                <div class="submit" @click="submit" >提交报价</div>
             </div>
         </div>
         <div class="main">
@@ -49,19 +49,19 @@
                        <div class="tr"><span>用户名</span><span>数量</span><span>操作</span></div>
                          <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="(order ,index) in sellOrders" :key='index' @click="getQuotations(index,order.sell_order_id)" :class="{actived: trActived==index}"><span>{{order.user_name}}</span><span>{{order.amount}}</span><span ><span @click="showDowde">报价</span></span></div>
+                       <div class="tr" v-for="(order ,index) in sellOrders" :key='index' @click="getQuotations(index,order.sell_order_id)" :class="{actived: trActived==index}"><span>{{order.user_name}}</span><span>{{order.amount}}</span><span ><span @click="showDowde(index)">报价</span></span></div>
 
                         </el-scrollbar>
                    <!-- </el-row> -->
 
                 </div><div class="right-wrap">
                     <div class="title">
-                        <span>买方报价</span><span>参考市价{{RP}}CNY</span>
+                        <span>买方报价</span><span>参考市价{{marketPrise}}CNY</span>
                     </div>
                     <div class="tr"><span>用户名</span><span>单价</span><span>折扣</span><span>总价</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="(buyer, index) in currentlyQuotaions" :key='index' ><span>{{buyer.user_name}}</span><span>{{buyer.unit_price}}</span><span >{{buyer.discount}}</span><span>{{buyer.total_price}}</span></div>
+                       <div class="tr" v-for="(buyer, index) in currentlyQuotaions" :key='index' ><span>{{buyer.user_name}}</span><span>{{buyer.unit_price}}</span><span >{{buyer.discount}}折</span><span>{{buyer.total_price}}</span></div>
 
                     </el-scrollbar>
 
@@ -90,7 +90,10 @@
                 </div>
             </div> 
         </div>
+    <!-- <my-footer class="footer"></my-footer> -->
+
     </div>
+    
 </template>
 
 <script>
@@ -115,10 +118,35 @@ export default {
             currentlyQuotaions:[],
             myQuotations:[],
             myAdvertise:[],
-            RP:''
+            RP:'',
+            sellOrderId:0,
+            currentCoinPrice: '',
+            marketPrise:'',
+            itemPrice: '',
         }
     },
+    computed:{
+        changetype(){
+            // debugger
+            return  (this.marketPrise / this.itemPrice).toFixed(5)
+        },
+            placeholder(){return `固定单价，例如` + this.marketPrise.toFixed(5)}
+
+    },
     methods:{
+        //获取货币价格
+         getCurrentCoinPrice(){
+             let seft =  this
+            let coin = this.axios.post('/getUserInfo',{token: this.token})
+                    .then(response =>{
+                        response.data.balances.forEach(item =>{
+                        if (item.coin_type == this.currentCoin){
+                            seft.currentCoinPrice = item.coin_balance
+                        }
+                        })
+                    })
+            // return coin.coin_balance
+        },
         //此方法为数据初始化
         init(){
              this.axios.post('/getCoinsList',{
@@ -140,6 +168,10 @@ export default {
             // }
             console.log('sellOrders',response)
         })
+          this.axios.get(`http://market.jinse.com/api/v1/tick/BITFINEX:${this.type}USD?unit=CNY`).then(responese => {
+            console.log('changkaojia',responese)
+            this.marketPrise = responese.data.close
+        })
         },
         //筛选买家报价列表
         filterData(origin, property, value){
@@ -159,7 +191,13 @@ export default {
         showDowde(sellID) {
       this.dowde = true;
       document.body.style = "overflow: hidden";
+      this.getCurrentCoinPrice()
       this.reset();
+       this.axios.get(`http://market.jinse.com/api/v1/tick/BITFINEX:${this.currentCoin}USD?unit=CNY`).then(responese => {
+            console.log('changkaojia',responese)
+            this.itemPrice = responese.data.close
+        })
+      
       
     //   this.curData = this.data[i].buyer.filter(item => {
     //     return item.type === this.curName;
@@ -172,7 +210,7 @@ export default {
     },
     //得到买方报价
     getQuotations(index){
-        let id = arguments[1]
+        this.sellOrderId = arguments[1]
         this.trActived = index
         
         this.axios.post('/getQuotations',{
@@ -199,6 +237,44 @@ export default {
       this.dowde = false;
       document.body.style = "overflow: none";
     },
+    //提交报价
+    submit(index){
+        debugger
+        if( this.price == this.discount){
+            console.log('11111111111111')
+            return
+            }
+        let options = {}
+        debugger
+        options.sell_order_id = this.sellOrderId
+        options.token = this.token
+        options.market_id = this.$route.params.markets_id
+        options.coin_id = this.$route.params.markets.find((market) => {
+            return market.market_name == this.currentCoin
+        }).markets_id -1
+        // options.coin_id = 1
+        options.amount = Number.parseInt(this.sellOrders[this.trActived].amount)
+        // options.coin_name = this.type
+        if(this.price){
+            options.unit_price = this.price
+            options.discount = (this.price / this.marketPrise).toFixed(2)
+            
+        }
+        if(this.discount){
+            options.discount = this.discount / 100
+            debugger
+            options.unit_price = this.marketPrise * options.discount
+
+        }
+        options.total_price = this.price * options.amount
+        this.axios.post('/quote',options).then(response =>{
+            console.log(response)
+            this.getQuotations(this.trActived,this.sellOrderId)
+
+        })
+        
+        this.cancel()
+    },
     //改变购买种类进行数据更新 选择市场
     changeOrder(){
           this.axios.post('/getCoinsList',{
@@ -218,6 +294,10 @@ export default {
                 this.sellOrders = data.sell_orders
             // }
             console.log('sellOrders',response)
+        })
+        this.axios.get(`http://market.jinse.com/api/v1/tick/BITFINEX:${this.type}USD?unit=CNY`).then(responese => {
+            console.log('changkaojia',responese)
+            this.marketPrise = responese.data.close
         })
     },
     },
@@ -246,6 +326,7 @@ export default {
     },
     mounted(){
         console.log('sdfds',this.$props);
+        
        
     },
     watch:{
@@ -259,6 +340,9 @@ export default {
         token(newV,oldV){
            
         }
+    },
+    type(){
+        
     }
 
 }
@@ -273,6 +357,17 @@ input[type="radio"] {
       outline-style: none;
       border-bottom: 1px solid rgba(223, 229, 231, 1);
       display: inline;
+    }
+    .inp.text{
+        position: relative;
+        &::before{
+            content:'%';
+            display: block;
+            color: #000;
+            font-weight: 600;
+            position: absolute;
+            right: 15px;
+        }
     }
 .check + label {
   & + span {
@@ -479,13 +574,14 @@ input[type="radio"] {
                     margin: 8px 0px;
                     line-height: 36px;
                     span:nth-child(1){
-                        width: 220px;
+                        width: 40%;
+                        box-sizing: border-box;
                     }
                     span:nth-child(2){
-                        width: 150px;
+                        width: 20%;
                     }
                     span:nth-child(3){
-                        width: 149px;
+                        width: 40%;
                         text-align: right;
                     }
                     span:nth-child(3) > span{
@@ -557,17 +653,17 @@ input[type="radio"] {
                     margin: 8px 0px;
                     line-height: 36px;
                     span:nth-child(1){
-                        width: 220px;
+                        width: 32%;
                     }
                     span:nth-child(2){
-                        width: 234px;
+                        width: 33%;
                     }
                     span:nth-child(3){
-                        width: 50px;
+                        width: 20%;
                         // text-align: right;
                     }
                     span:nth-child(4){
-                        width: 176px;
+                        width: 15%;
                         // float: right;
                         text-align: right;
 
@@ -629,21 +725,21 @@ input[type="radio"] {
                 }
         .price .tr{
             span:nth-child(1){
-                        width: 220px;
+                        width: 19%;
                     }
             span:nth-child(2){
-                width: 307px;
+                width: 25%;
             }
             span:nth-child(3){
-                width: 190px;
+                width: 17%;
                 
             }
             span:nth-child(4){
-                width: 380px;
+                width: 20%;
             
             }
             span:nth-child(5){
-                width: 100px;
+                width: 19%;
                 text-align: right;
             }
         }

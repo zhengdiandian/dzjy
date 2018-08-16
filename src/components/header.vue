@@ -7,10 +7,11 @@
             <ul class="nav-center nav-left ">
                 <!-- <router-link to="/index" @click="()=>false"> -->
                 <li ><router-link active-class="nav-actived" :to="{name:'index', params:{
-                    type:selectValue
+                    type:selectValue,
+                    marketID:marketID
                 }}" >购买{{selectValue}}</router-link> <span class="select "  @click="showSel = !showSel" ></span>
                     <ul class="sel-list" v-show="showSel">
-                        <li v-for="item in marketData" @click = changeSelect(item) :key="item.markets_id">{{item.market_name}}</li>
+                        <li v-for="(item ,index) in marketData" @click = changeSelect(item,index) :key="item.markets_id">{{item.market_name}}</li>
                         <!--<li>{{}}</li>-->
                         <!--<li>ETH</li>-->
                         <!--<li>ETH</li>-->
@@ -42,7 +43,9 @@
               selectValue: 'EOS',
               current: 2,
               op: 1,
-              marketData: []
+              marketData: [],
+              marketID: '1',
+              marketIndex: 0
 
             }
         },
@@ -53,10 +56,12 @@
         // }
       },
       methods: {
-          changeSelect(options){
+          changeSelect(options,index){
               this.opacity = 1
+              this.marketID = index
             this.selectValue = options.market_name
             this.showSel = !this.showSel
+            this.marketID = options.markets_id
             this.$router.push({
                 name: 'index',
                 params: {
@@ -71,8 +76,13 @@
       },
       created(){
            this.axios.post('/getMarketsList').then(response => {
-            console.log(response)
+            console.log('market',response)
+            
             this.marketData = response.data.markets
+            this.marketID = response.data.markets[this.marketIndex].markets_id
+            this.$route.params.markets_id = this.marketID
+            this.$route.params.markets = response.data.markets
+            // Vue.prototype.markets = response.data.markets
         })
       },
       beforeRouteUpdate (to, from, next) {
