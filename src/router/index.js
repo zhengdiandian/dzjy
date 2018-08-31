@@ -5,7 +5,7 @@ import Main from '@/components/main'
 import Broadcast from '@/components/broadcast'
 import Sell from '@/components/sell'
 import Transaction from '@/components/transaction'
-
+import Guidance from '@/components/guidance'
 Vue.use(Router)
 
 export default new Router({
@@ -16,7 +16,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/index/EOS'
+      // redirect: '/index/EOS'
+      component: Guidance
     },
     {
       path: '/index/:type',
@@ -35,11 +36,17 @@ export default new Router({
       path: '/sell',
       name: 'sell',
       component: Sell,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/transaction',
       name: 'transaction',
       component:Transaction,
+      meta: {
+        keepAlive: true
+      }
     }
   ]
 })

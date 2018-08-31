@@ -1,17 +1,23 @@
 <template>
+
+  
     <div class="main-wrap">
-        <div class="main">
+      <div class="guidance" v-if='flag'>
+        <img src="../../static/img/guidance8@2x.png" alt="">
+        <div class="next" @click='next'></div>
+      </div>
+        <div class="main" v-show="!flag">
           <div class="notice">
-            注意：
+            Attention:
           </div>
-          <div class="notice-item">1，Client Wallet目前仅支持ERC20币种，其他支持币种正在开发中…</div>
-          <div class="notice-item">2，大宗交易发起金额必须大于1000.00USDT或等值法币</div>
-          <div class="notice-item">3，Block Trading完成后，平台收取发起方0.1%的手续费</div>
+          <div class="notice-item">1, Only two ERC20 currency are supported now, others are coming soon.</div>
+          <div class="notice-item">2, Block trading amount has to be over 100,000USDT or same value of legal tender.</div>
+          <div class="notice-item">3, 0.1% of commission fee will be charged after block trading.</div>
           <div class="issue">
-            <div class="issue-title">EOS资产：{{balance}}</div>
-            <div class="issue-info-title">出售设置</div>
-            <div class="issue-info">出售数量: <input type="text" v-model="num" placeholder="最小可出售5000.00EOS"></div>
-            <div class="issue-info">接收币种:
+            <div class="issue-title">EOS Asset：{{balance}}</div>
+            <div class="issue-info-title">Sell order setting</div>
+            <div class="issue-info">sell amount: <input type="text" v-model="num" placeholder="minimum amount is 10,000 EOS"></div>
+            <div class="issue-info">Receive currency:
               <div>
                 <input class="check" type="checkbox" value="BTC" v-model="icoType" id="BTC">
                 <label for="BTC"></label>
@@ -19,11 +25,11 @@
                 <input class="check" type="checkbox" value="ETH" v-model="icoType"  id="ETH">
                 <label for="ETH"></label>
                 <span>ETH</span>
-                <input class="check" type="checkbox" value="USDT" v-model="icoType"  id="USDT">
+                <input class="check" type="checkbox" value="LTC" v-model="icoType"  id="USDT">
                 <label for="USDT"></label>
-                <span>USDT</span>
+                <span>LTC</span>
               </div>
-              <span class="btn" @click="submit">发布</span>
+              <span class="btn" @click="submit">issue</span>
             </div>
           </div>
         </div>
@@ -44,19 +50,23 @@
             data:[],
             num:'',
             userInfo: [],
-            balance: ''
+            balance: '',
+            flag: true,
           }
 
         },
       methods: {
+          next(){
+            this.flag = false
+          },
           submit(){
             let token = sessionStorage.getItem('token')
             // debugger
           
             this.icoType.forEach(ico => {
-              debugger
+              // debugger
               let data = this.$root.markets.filter(market => {
-                debugger
+                // debugger
                 return market.market_name == ico}
               )
               let market_id = data[0].markets_id
@@ -65,7 +75,7 @@
                 market_id,
                 'amount': Number.parseFloat(this.num)
               }).then((response)=>{
-                this.$router.go(-1)
+                this.$router.push({path:`/index/EOS`})
                 console.log(response)
               })
             },this)
@@ -106,6 +116,7 @@
            
         }
         console.log(this.$root.markets)
+        // this.flag = false
       },
     }
 
@@ -116,6 +127,26 @@
     width: 100%;
     height: 862px;
     background:rgba(249,249,249,1);
+    .guidance{
+      width: 100%;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      img{
+        width: 100%;
+        vertical-align: bottom;
+      }
+      .next{
+        cursor: pointer;
+         position: absolute;
+        top: 31.5%;
+        left: 66%;
+        opacity: 0;
+        width: 3vw;
+        height: 20px;
+        
+      }
+    }
     .main{
       margin: 0 auto;
       width: 1200px;

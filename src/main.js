@@ -17,7 +17,9 @@ Vue.prototype.axios = Axios.create({
 })
 Vue.use(elementUi)
 Vue.config.productionTip = false
-
+Vue.filter('num',(value => {
+  return value *10
+}))
 Date.prototype.format = function(fmt) {
   var o = {
     "M+" : this.getMonth()+1,                 //月份

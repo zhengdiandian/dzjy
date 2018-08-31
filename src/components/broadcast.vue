@@ -1,17 +1,21 @@
 <template>
     <div class="main-wrap">
-        <div class="main">
+        <div class="guidance" v-if='flag'>
+            <img src="../../static/img/guidance10@2x.png" alt="">
+            <div class="next" @click='next'></div>
+      </div>
+        <div class="main" v-show="!flag">
             <div class="purchase">
                 <div class="left-wrap">
                     <div class="title">
-                        <span>我的广告</span>
+                        <span>My sell order</span>
                     </div>
                     
                     <!-- <el-scrollbar wrap-class="list">
                         <div v-for="n in 1000" :key="n">{{n}}</div>
                     </el-scrollbar> -->
                    <!-- <el-row> -->
-                       <div class="tr"><span>订单</span><span>日期</span></div>
+                       <div class="tr"><span>Order</span><span>Time</span></div>
                          <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
                        <div class="tr" v-for="(item ,index) in myAdvertise " :key='index' @click="clickTr(index, item.sell_order_id)" :class="{actived: trActived==index}"><span>{{item.sell_order_id}}&nbsp&nbsp{{item.market}}</span><span >{{new Date(item.date*1000).format("yyyy-MM-dd &nbsp&nbsp hh: mm: ss")}}</span></div>
@@ -21,12 +25,12 @@
 
                 </div><div class="right-wrap">
                     <div class="title">
-                        <span>买方报价</span><span>参考市价3020.20CNY</span>
+                        <span>Buyer's offer</span><span>Reference price:{{marketPrice}}CNY</span>
                     </div>
-                    <div class="tr"><span>用户名</span><span>单价</span><span>折扣</span><span>总价</span><span>成交</span></div>
+                    <div class="tr"><span>User name</span><span>Unit price</span><span>Discount</span><span>Total price</span><span>make a bargain</span></div>
                     <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                            
-                       <div class="tr" v-for="(item, index) in myQuotations" :key='index' ><span>{{item.user_name}}</span><span>{{item.amount}}</span><span >{{item.discount}}折</span><span>{{item.total_price}}</span><span class="text-blue">成交</span></div>
+                       <div class="tr" v-for="(item, index) in myQuotations" :key='index' ><span>{{item.user_name}}</span><span>{{item.amount}}</span><span >{{item.discount | num}}</span><span>{{item.total_price}}</span><span class="text-blue">make a bargain</span></div>
 
                     </el-scrollbar>
 
@@ -45,22 +49,57 @@ export default {
         return {
             trActived: 0,
             myAdvertise:[],
-            myQuotations:[]
+            myQuotations:[],
+            marketPrice: this.$route.params.marketPrice,
+            flag: true,
+            time: null
+            
+            
         }
     },
     methods:{
         clickTr(index,id){
             this.trActived = index
+            let getQuotations = () =>{
+                this.axios.post('/getQuotations',{
+                    'sell_order_id': id
+                }).then(response => {
+                    this.myQuotations = response.data.sell_orders
+                    console.log('dsfdsf',response)
+                })
+                    }
+            getQuotations()
+            clearTimeout(this.time)
+            let timer =  (date) => {
+                clearTimeout(this.timer)
+                this.timer = setTimeout(() => {
+                    getQuotations()
+                    timer(date)
+                }, date)
+                // return timer()
+
+            }
+            timer(2000)
+            // this.timer = setTimeout(() =>{
+            //     getQuotations()
+            // },2000)
             
-            this.axios.post('/getQuotations',{
-            'sell_order_id': id
-        }).then(response => {
-            this.myQuotations = response.data.sell_orders
-            console.log('dsfdsf',response)
-        })
+        //     this.axios.post('/getQuotations',{
+        //     'sell_order_id': id
+        // }).then(response => {
+        //     this.myQuotations = response.data.sell_orders
+        //     console.log('dsfdsf',response)
+        // })
+        },
+        next(){
+            this.flag = false 
         }
     },
     created(){
+        // this.axios.get(`http://market.jinse.com/api/v1/tick/BITFINEX:${this.type}USD?unit=CNY`).then(responese => {
+        //     console.log('changkaojia',responese)
+        //     this.marketPrise = responese.data.close
+        // })
         this.trActived = this.$route.params.index
          let token = sessionStorage.getItem('token')
         if( token){
@@ -95,6 +134,27 @@ export default {
         padding-top: 22px;
         width: 100%;
         background:rgba(249,249,249,1);
+        .guidance{
+      width: 100%;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      z-index: 999;
+      img{
+        width: 100%;
+        vertical-align: bottom;
+      }
+      .next{
+        cursor: pointer;
+         position: absolute;
+        top: 29.9%;
+        left: 22%;
+        opacity:0;
+        width: 3vw;
+        height: 23px;
+        // background-color: red;
+      }
+    }
     }
     .main{
         margin: 0 auto;
@@ -198,23 +258,23 @@ export default {
                     margin: 8px 0px;
                     line-height: 36px;
                     span:nth-child(1){
-                        width: 220px;
+                        width: 25%;
                     }
                     span:nth-child(2){
-                        width: 200px;
+                        width: 20%;
                     }
                     span:nth-child(3){
-                        width: 50px;
+                        width: 10%;
                         // text-align: right;
                     }
                     span:nth-child(4){
-                        width: 109px;
+                        width: 16%;
                         // float: right;
                         text-align: right;
 
                     }
                     span:nth-child(5){
-                        width: 99px;
+                        width: 28%;
                         // float: right;
                         text-align: right;
 

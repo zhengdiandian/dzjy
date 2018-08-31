@@ -1,30 +1,34 @@
 <template>
     <div class="main-wrap">
-      <div class="main">
+        <div class="guidance" v-if='flag'>
+            <img src="../../static/img/guidance9@2x.png" alt="">
+            <div class="next" @click='next'></div>
+      </div>
+      <div class="main" v-show="!flag" >
         <div class="tab-wrap">
-          <div class="title">交易记录</div>
-          <div class="tr"><span>订单</span><span>交易金额</span><span>交易数量</span><span>日期</span><span>状态</span></div>
+          <div class="title">transcation record</div>
+          <div class="tr"><span>Order</span><span>Number</span><span>Amount</span><span>Time</span><span>Status</span></div>
           <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                   
-              <div class="tr" v-for="n in 199" :key='n' ><span>用户名</span><span>数量</span><span >9.9折</span><span>总价</span><span class="text-blue">成交</span></div>
+              <div class="tr" v-for="(order, n) in totalOrder" :key='n' ><span>{{order.quotation_id}}&nbsp&nbsp{{order.market}}</span><span>{{order.amount}}</span><span >{{order.amount }}</span><span>{{new Date(order.date*1000).format("yyyy-MM-dd &nbsp&nbsp hh: mm: ss")}}</span><span :class="[status[order.status].calss]">{{status[order.status].text}}</span></div>
 
           </el-scrollbar>
         </div>
         <div class="tab-wrap">
-          <div class="title">发布广告记录</div>
-          <div class="tr"><span>订单</span><span>交易金额</span><span>交易数量</span><span>日期</span><span>状态</span></div>
+          <div class="title">releasing sell order record</div>
+          <div class="tr"><span>Order</span><span>Number</span><span>Amount</span><span>Time</span><span>Status</span></div>
           <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                   
-              <div class="tr" v-for="(item,n ) in adData" :key='n' ><span>{{item.sell_order_id}}{{item.maket}}</span><span>{{item.amount}}</span><span >{{item.discount}}</span><span>{{new Date(item.date*1000).format("yyyy-MM-dd &nbsp&nbsp hh: mm: ss")}}</span><span class="text-blue">{{status[item.status].text}}</span></div>
+              <div class="tr" v-for="(item,n ) in adData" :key='n' ><span>{{item.sell_order_id}}&nbsp&nbsp{{item.market}}</span><span>{{item.amount}}</span><span >{{item.amount * item.deal_price }}</span><span>{{new Date(item.date*1000).format("yyyy-MM-dd &nbsp&nbsp hh: mm: ss")}}</span><span :class="[status[item.status].calss]">{{status[item.status].text}}</span></div>
 
           </el-scrollbar>
         </div>
         <div class="tab-wrap">
-          <div class="title">报价记录</div>
-         <div class="tr"><span>订单</span><span>交易金额</span><span>交易数量</span><span>日期</span><span>状态</span></div>
+          <div class="title">Offer record</div>
+         <div class="tr"><span>Order</span><span>Number</span><span>Amount</span><span>Time</span><span>Status</span></div>
           <el-scrollbar wrap-class="list" tag="div" wrap-style="z-index: 100 ;" view-style="max-height: 350px; z-index: 100;  " view-class="view-box" :native="false">
                   
-              <div class="tr" v-for="(item, n ) in quoteData " :key='n' ><span>{{item.quotation_id}}&nbsp&nbsp{{item.market}}</span><span>{{item.amount}}</span><span >9.9折</span><span>{{new Date(item.date*1000).format("yyyy-MM-dd &nbsp&nbsp hh: mm: ss")}}</span><span :class="[status[item.status].calss]">{{status[item.status].text}}</span></div>
+              <div class="tr" v-for="(item, n ) in quoteData " :key='n' ><span>{{item.quotation_id}}&nbsp&nbsp{{item.market}}</span><span>{{item.amount}}</span><span >{{item.amount}}</span><span>{{new Date(item.date*1000).format("yyyy-MM-dd &nbsp&nbsp hh: mm: ss")}}</span><span :class="[status[item.status].calss]">{{status[item.status].text}}</span></div>
 
           </el-scrollbar>
         </div>
@@ -37,27 +41,40 @@
 <script>
     export default {
         name: "adimin",
+         methods:{
+            next(){
+                this.flag = false
+                console.log('flag')
+            }
+        },
         data(){
           return {
             userData: [],
             quoteData: [],
             adData:[],
             status:[
-              {text: '进行中',
+              {text: 'Processing',
               calss: 'text-blue'
               },
               {
-              text: '已完成',
+              text: 'Done',
               class: 'text-green'
               
             },
             {
-              text: '已取消',
+              text: 'Cabcel',
               class: 'text-red'
             }
-            ]
+            ],
+            flag: true,
           }
         },
+        computed:{
+            totalOrder(){
+                return this.adData.concat(this.quoteData)
+            }
+        },
+        
         created(){
         
           let token = sessionStorage.getItem('token')
@@ -90,6 +107,28 @@
       .main-wrap{
         width: 100%;
         background:rgba(249,249,249,1);
+        .guidance{
+            width: 100%;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 999;
+            img{
+                width: 100%;
+                vertical-align: bottom;
+            }
+        .next{
+            cursor: pointer;
+            position: absolute;
+            top: 29.8%;
+            left: 22%;
+            opacity: 0;
+            width: 3vw;
+            height: 20px;
+            background-color: red;
+            z-index: 9999;
+        }
+    }
         .main{
           margin: 0 auto;
           padding-bottom: 32px;

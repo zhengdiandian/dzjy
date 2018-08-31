@@ -2,14 +2,15 @@
     <header>
         <div class="wrapper">
             <div class="logo">
-                <a href="/"><span></span></a>
+                <router-link to='/index/EOS'><span></span></router-link>
+                <!-- <a href="/index/EOS"></a> -->
             </div>
             <ul class="nav-center nav-left ">
                 <!-- <router-link to="/index" @click="()=>false"> -->
                 <li ><router-link active-class="nav-actived" :to="{name:'index', params:{
                     type:selectValue,
                     marketID:marketID
-                }}" >购买{{selectValue}}</router-link> <span class="select "  @click="showSel = !showSel" ></span>
+                }}" >Purchase{{selectValue}}</router-link> <span class="select "  @click="showSel = !showSel" ></span>
                     <ul class="sel-list" v-show="showSel">
                         <li v-for="(item ,index) in marketData" @click = changeSelect(item,index) :key="item.markets_id">{{item.market_name}}</li>
                         <!--<li>{{}}</li>-->
@@ -18,8 +19,9 @@
                     </ul>
                 </li>
                 <!-- </router-link> -->
-                <li :class="{'nav-actived': current == 2}" @click=" num =2"><router-link to="/sell" active-class="nav-actived">发布广告</router-link></li>
-                <li :class="{'nav-actived': current == 3}"><router-link to='/transaction' active-class="nav-actived" @click="op=0.5" >交易管理</router-link> <span class=""></span></li>
+                <li :class="{'nav-actived': current == 2}" @click=" num =2"><router-link to="/sell" active-class="nav-actived">Order Releasing</router-link></li>
+                <li :class="{'nav-actived': current == 3}"><router-link to='/transaction' active-class="nav-actived" @click="op=0.5" >Transcation management
+                </router-link> <span class=""></span></li>
             </ul>
         <ul class="nav-center nav-right">
             <li>

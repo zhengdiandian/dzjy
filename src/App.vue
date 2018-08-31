@@ -1,7 +1,11 @@
 <template>
   <div id="app">
     <my-header></my-header>
-    <router-view :token='userToken'></router-view>
+    <keep-alive exclude='index'>
+
+      <router-view :token='userToken'></router-view>
+    </keep-alive>
+    <!-- <router-view v-if="!$route.meta.keepAlive" :token='userToken'></router-view> -->
     <my-footer class="footer"></my-footer>
   </div>
 </template>
@@ -30,6 +34,11 @@ export default {
         }).catch((error) => {
             console.log(error)
         })
+  },
+  computed(){
+    debugger
+            this.$refs.dowde.style.height = window.getComputedStyle(document.body,null).style.height + 'px'
+
   }
 }
 </script>
@@ -42,12 +51,12 @@ export default {
   ul, ol{
     list-style: none;
   }
-  html{
-    height: 100%;
-  }
+  // html{
+  //   // height: 100%;
+  // }
   body{
     min-width: 1200px;
-      height: 100%;
+      // height: 100%;
       cursor: default;
       font-family: PingFangSC-Regular, Helvetica, Tahoma, Arial, \5b8b\4f53, sans-serif;
       list-style: none;
@@ -96,6 +105,7 @@ export default {
   text-align: right;
 }
 .text-red{
+  cursor: pointer;
   color:rgba(240,48,48,1);
   text-decoration:underline;
 }
